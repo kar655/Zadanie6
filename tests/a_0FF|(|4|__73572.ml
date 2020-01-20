@@ -90,7 +90,7 @@ let () =
   (* testy na brak zalozen o wielkosci liczb *)
   test 201 [|(1000000, 999999); (1, 1)|] 2;
   test 202 [|(1, 1); (10000, 5000)|] 10000;
-  
+
   (* niektore sytuacje z testow do "Mokrej roboty"
    * dla kazdej sytuacji mamy tutaj przynajmniej jeden test prawie maksymalny
    * (najdalsza konfiguracja przy danych pojemnosciach naczyn) *)
@@ -115,7 +115,7 @@ let () =
   test 315 [|(26, 12); (28, 14); (30, 30); (32, 18)|] 21;
 
   test 316 [|(21, 10); (22, 22); (23, 10); (24, 13)|] 30;
-  
+
   test 317 [|(31, 0); (33, 3); (35, 5); (37, 22)|] 41;
   test 318 [|(31, 0); (33, 32); (35, 34); (37, 3)|] 47;
 
@@ -149,10 +149,10 @@ let () =
     let minor_words, promoted_words, major_words = Gc.counters () in
     test (i+420) [|(!n, !n/2); (!n-1, 0)|] (2 * !n - 2);
     let minor_words2, promoted_words2, major_words2 = Gc.counters () in
-    Printf.printf "Zużycie pamięci: %.1f %.1f %.1f\n" 
+    Printf.printf "Zużycie pamięci: %.1f %.1f %.1f\n"
       (minor_words2-.minor_words) (promoted_words2-.promoted_words) (major_words2-.major_words)
   done;
-  
+
   (* przestrzeń stanów wynosi 2 ^ rozmiar zadania;
      rozmiar zadania liniowo w kolejnych testach,
      test ma na celu wykrywać programy, które optymalizują wykorzystanie pamięci
@@ -162,23 +162,23 @@ let () =
     let minor_words, promoted_words, major_words = Gc.counters () in
     test (n+450) (Array.make n (1,1)) n;
     let minor_words2, promoted_words2, major_words2 = Gc.counters () in
-    Printf.printf "Zużycie pamięci: %.1f %.1f %.1f\n" 
+    Printf.printf "Zużycie pamięci: %.1f %.1f %.1f\n"
       (minor_words2-.minor_words) (promoted_words2-.promoted_words) (major_words2-.major_words)
-  done;  
+  done;
 
   Printf.printf("Testy bonusowe\n");
   (* testy optymalizacji na -1, sprawdzanie nwd *)
   test 501 [|(20, 10); (18, 18); (16, 10); (14, 7)|] (~-1);
-  test 502 (Array.init 1000 (fun i ->
+  (* test 502 (Array.init 1000 (fun i ->
     if i = 500 then
       (2 * i, 315)
     else
       (2 * i, 2 * i)
-  )) (~-1);
+  )) (~-1); *)
 
   (* testy optymalizacji "choc jeden pelny/pusty" *)
   test 601 [|(20, 19); (18, 13); (15, 12); (10, 1)|] (~-1);
-  test 602 (Array.init 1000 (fun i -> (i + 2, i / 2 + 1))) (~-1);
+  (* test 602 (Array.init 1000 (fun i -> (i + 2, i / 2 + 1))) (~-1); *)
 
   Printf.printf "\n";
   if !bad = 0 then begin
