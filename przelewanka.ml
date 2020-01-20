@@ -1,14 +1,10 @@
 open Queue
-open Printf
-
-let drukuj tab =
-  printf "[|";
-  Array.iter (fun x -> printf "%d; " x) tab;
-  printf "|]\n"
-
 
 exception Not_finished
 exception Found
+
+let rec nwd a b =
+  if a = 0 then b else nwd (b mod a) a
 
 (* val przelewanka : (int * int) array -> int *)
 (* maks / oczekiwana *)
@@ -46,12 +42,16 @@ let przelewanka (naczynia: (int * int) array) =
 
   try
     if zrobione (top q) then raise Found; (* czy same 0 sa ok *)
+    (* warunek konieczny pelnej / pustej szklankai *)
+    if not (Array.exists (fun (m, o) -> m = o || o = 0 ) naczynia) then clear q;
+    (* nwd maks. pojemnosci musi dzielic oczekiwane *)
+    let gcd = Array.fold_left (fun a (m, _) -> nwd a m ) 0 naczynia in
+    if not (Array.for_all (fun (_, o) -> o mod gcd = 0) naczynia) then clear q;
+
     while not (is_empty q) do
       let akt = pop q in
       out := Hashtbl.find visited akt;
-      (* drukuj akt;
-      printf "ile elementow = %d\n" (length q);
-      printf "wynik = %d\n\n" !out; *)
+
       for i = 0 to n - 1 do
         for j = 0 to n - 1 do
           (* mozliwe czynnosci kubka z samym soba *)
@@ -91,7 +91,7 @@ let przelewanka (naczynia: (int * int) array) =
   with Found -> !out
 
 
-
+(* --------------------- TESTY --------------------- *)
 (*
 let c = [|(10,2);(20,20);(10,0);(1000,1000)|];;
 assert ( przelewanka c = -1 );;
