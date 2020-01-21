@@ -26,17 +26,16 @@ let przelewanka (naczynia: (int * int) array) =
   let pom = ref 0 in
   let pom2 = ref 0 in
   (* stany odwidzone *)
-  let visited = Hashtbl.create n in
+  let visited = Hashtbl.create 10 in
 
   (* dodaje stan do odwiedzonych sprawdzajac czy jest dobry *)
   let dodaj_stan stan =
     if not (Hashtbl.mem visited stan) then begin
-      if zrobione stan then begin incr out; raise Found end else begin
+      if zrobione stan then begin incr out; raise Found end else
         Hashtbl.add visited (Array.copy stan) (!out + 1);
-        add (Array.copy stan) q end end
+        add (Array.copy stan) q end
   in
 
-  (* add (Array.make n 0) q; *)
   Hashtbl.add visited (Array.make n 0) 0;
   add (Array.make n 0) q;
 
@@ -44,7 +43,7 @@ let przelewanka (naczynia: (int * int) array) =
     if zrobione (top q) then raise Found; (* czy same 0 sa ok *)
     (* warunek konieczny pelnej / pustej szklankai *)
     if not (Array.exists (fun (m, o) -> m = o || o = 0 ) naczynia) then clear q;
-    (* nwd maks. pojemnosci musi dzielic oczekiwane *)
+    (* nwd maksymalnych pojemnosci musi dzielic oczekiwane *)
     let gcd = Array.fold_left (fun a (m, _) -> nwd a m ) 0 naczynia in
     if not (Array.for_all (fun (_, o) -> o mod gcd = 0) naczynia) then clear q;
 
@@ -71,7 +70,7 @@ let przelewanka (naczynia: (int * int) array) =
             pom := akt.(i);
             pom2 := akt.(j);
             (* kiedy sie przeleje *)
-            if !pom2 <> fst naczynia.(j) && !pom <> 0 then begin
+            if !pom2 <> fst naczynia.(j) && !pom <> 0 then
               if !pom + !pom2 > fst naczynia.(j) then begin
                 akt.(i) <- akt.(i) - fst naczynia.(j) + akt.(j);
                 akt.(j) <- fst naczynia.(j);
@@ -79,8 +78,7 @@ let przelewanka (naczynia: (int * int) array) =
               else begin
                 akt.(j) <- akt.(j) + akt.(i);
                 akt.(i) <- 0;
-                dodaj_stan akt end
-            end;
+                dodaj_stan akt end;
 
             akt.(i) <- !pom;
             akt.(j) <- !pom2;
